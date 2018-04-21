@@ -12,24 +12,38 @@ import kotlinx.coroutines.experimental.launch
 import org.json.JSONArray
 
 class MainActivity : AppCompatActivity() {
+    var result = JSONArray()
+    private lateinit var borderCoordinates : Array<Point>
+    lateinit var p : Point
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         var loader = FullDataLoader("r121")
-        val downLoadThread = async(CommonPool) {
-            loader.downloadBorders()
-        }
-        /*val downLoadThread2 = async(CommonPool) {
-            val borders = loader.downloadBorders()
-            loader.downloadActiveBuyers()
-        }*/
-        launch (UI){
-            val result = downLoadThread.await()
-            print("Ok")
+
+        val downLoadBordersThread = async(CommonPool) {
+            result =  loader.downloadBorders()
+            try{
+                return@async Array(result.length(),{i -> (Point(result.getJSONArray(i).getDouble(0),
+                        result.getJSONArray(i).getDouble(1)))})
+
+            }catch (e : Exception){
+                e.printStackTrace()
+            }
         }
 
+        val downLoadActiveBuyersThread = async(CommonPool) {
+            val result = loader.downloadActiveBuyers()
+            print("ok")
+        }
+        launch {
+            loader.downloadActiveBuyers()
+            borderCoordinates = downLoadBordersThread.await() as Array<Point>
+        }
+
+        print(borderCoordinates.get(0).lat)
+        print("ok")
 
     }
 }

@@ -15,9 +15,9 @@ class FullDataLoader(territoryName : String) {
     val territoryName = territoryName
     lateinit var borders : Array<Double>
 
-    fun downloadActiveBuyers() {
+    fun downloadActiveBuyers() : JSONObject{
         var data = StringBuilder()
-        var jsonResponse: JSONObject
+        var jsonResponse: JSONObject = JSONObject()
         var statusActive = "1"
         try {
             val connection = URL(baseBuyersUrl + statusActive + territoryStr + territoryName).openConnection() as HttpURLConnection
@@ -36,9 +36,10 @@ class FullDataLoader(territoryName : String) {
         }catch (e : Exception){
 
         }
+        return jsonResponse
     }
     fun downloadBorders() : JSONArray {
-        lateinit var coordinates : JSONArray
+        var coordinates = JSONArray()
         var stringBuilder = StringBuilder()
         var jsonResponse: JSONObject
         try {
@@ -52,7 +53,6 @@ class FullDataLoader(territoryName : String) {
                         .getJSONObject("geometry")
                         .getJSONArray("coordinates")
                         .getJSONArray(0)
-                val coordinatesCount = coordinates.length()
                 print("ok")
             } catch (e: Exception) {
                 e.printStackTrace()
