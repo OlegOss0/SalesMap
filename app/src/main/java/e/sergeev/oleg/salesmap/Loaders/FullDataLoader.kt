@@ -35,7 +35,7 @@ class FullDataLoader(territoryName : String) {
                 e.printStackTrace()
             }
         }else{
-            Log.i("Courutines", "status not weong status")
+            Log.i("Courutines", "status wrong")
         }
         return jsonResponse
     }
