@@ -6,6 +6,11 @@ import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -17,21 +22,22 @@ import e.sergeev.oleg.salesmap.Models.Buyer
 
 
 class MainActivity : AppCompatActivity() {
+
     var result = JSONArray()
     private lateinit var borderCoordinates : Array<Point>
     private lateinit var activeBuyers : Array<Buyer>
     private lateinit var contentFragment: Fragment
-    private lateinit var googleMapFragment : GoogleMapFragment
+    private lateinit var gMapFragment: GMapFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        googleMapFragment = GoogleMapFragment()
+        gMapFragment = GMapFragment()
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .add(R.id.container, googleMapFragment)
+                    .add(R.id.container, gMapFragment)
                     .commit()
         }
 
