@@ -7,11 +7,11 @@ interface MapChange {
 
     fun setMyLocation()
 
-    /*fun createBorder()
+    fun createBorder()
 
-    fun setActiveBuyers()
+    //fun setActiveBuyers()
 
-    fun setSleepBuyers()
+    //fun setSleepBuyers()
 
-    fun clearAll()*/
+    //fun clearAll()
 }
