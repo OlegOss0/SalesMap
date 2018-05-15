@@ -9,32 +9,38 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import com.yandex.mapkit.geometry.Point
+import e.sergeev.oleg.salesmap.Loaders.FullDataLoader
 import e.sergeev.oleg.salesmap.Models.Buyer
+import e.sergeev.oleg.salesmap.Models.MyPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.json.JSONArray
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     var result = JSONArray()
-    private lateinit var borderCoordinates : Array<Point>
+    private lateinit var borderCoordinates : Array<MyPoint>
     private lateinit var activeBuyers : Array<Buyer>
     private lateinit var contentFragment: Fragment
     private lateinit var gMapFragment: GMapFragment
+    private lateinit var yMapFragment: YaMapFragment
+    private val loader: FullDataLoader = FullDataLoader("r113")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         gMapFragment = GMapFragment()
+        yMapFragment = YaMapFragment()
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .add(R.id.container, gMapFragment)
+                    .add(R.id.container, yMapFragment)
                     .commit()
         }
-
-        if (G)
 
         setSupportActionBar(toolbar)
 
@@ -79,16 +85,103 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
-            }
-            R.id.nav_gallery -> {
+            R.id.show_borders-> {
+                if(gMapFragment.border == null){
+                    val downLoadBordersThread = async(CommonPool) {
+                        result =  loader.downloadBorders()
+                        try{
+                            borderCoordinates = Array(result.length(),{i -> (MyPoint(result.getJSONArray(i).getDouble(0),
+                                    result.getJSONArray(i).getDouble(1)))})
+                        }catch (e : Exception){
+                            e.printStackTrace()
+                        }
+                    }
+                    launch(UI){
+                        downLoadBordersThread.await()
+                        gMapFragment.createBorderPolygon(borderCoordinates)
+                    }
+                }else{
+                    var borderVisible = gMapFragment.border.isVisible
+                    if(borderVisible){
+                        gMapFragment.setBorderVisible(false)
+                    }else{
+                        gMapFragment.setBorderVisible(true)
+                    }
+                }
+
 
             }
-            R.id.nav_slideshow -> {
+            R.id.show_all_byers -> {
 
             }
-            R.id.nav_manage -> {
+            R.id.show_active_byers -> {
+                if(gMapFragment.activeBuyersMarkers == null){
+                    val downLoadActiveBuyersThread = async(CommonPool) {
+                        result = loader.downloadBuyersPoint("1") as JSONArray
+                        try{
+                            activeBuyers = Array(result.length(), {i -> (Buyer(result.getJSONObject(i).getInt("id"),
+                                    MyPoint(result.getJSONObject(i)
+                                            .getJSONObject("geometry")
+                                            .getJSONArray("coordinates")
+                                            .getDouble(0)
+                                            ,
+                                            result.getJSONObject(i)
+                                                    .getJSONObject("geometry")
+                                                    .getJSONArray("coordinates")
+                                                    .getDouble(1)
+                                    )))})
+
+                        }catch (e : Exception){
+                            e.printStackTrace()
+                        }
+                    }
+                    launch(UI){
+                        downLoadActiveBuyersThread.await()
+                        gMapFragment.createActiveBuyersMarkets(activeBuyers)
+                    }
+                }else{
+                    var activeBuyersVisible = gMapFragment.isActiveBuyersVisible
+                    if(activeBuyersVisible){
+                        gMapFragment.setActiveBuyersVisible(false)
+                    }else{
+                        gMapFragment.setActiveBuyersVisible(true)
+                    }
+                }
+
+            }
+            R.id.show_sleep_byers -> {
+                if(gMapFragment.sleepBuyersMarkers == null){
+                    val downLoadSleepBuyersThread = async(CommonPool) {
+                        result = loader.downloadBuyersPoint("0") as JSONArray
+                        try{
+                            activeBuyers = Array(result.length(), {i -> (Buyer(result.getJSONObject(i).getInt("id"),
+                                    MyPoint(result.getJSONObject(i)
+                                            .getJSONObject("geometry")
+                                            .getJSONArray("coordinates")
+                                            .getDouble(0)
+                                            ,
+                                            result.getJSONObject(i)
+                                                    .getJSONObject("geometry")
+                                                    .getJSONArray("coordinates")
+                                                    .getDouble(1)
+                                    )))})
+
+                        }catch (e : Exception){
+                            e.printStackTrace()
+                        }
+                    }
+                    launch(UI){
+                        downLoadSleepBuyersThread.await()
+                        gMapFragment.createSleepBuyersMarkets(activeBuyers)
+                    }
+                }else{
+                    var sleepBuyersVisible = gMapFragment.isSleepBuyersVisible
+                    if(sleepBuyersVisible){
+                        gMapFragment.setSleepBuyersVisible(false)
+                    }else{
+                        gMapFragment.setSleepBuyersVisible(true)
+                    }
+                }
 
             }
             R.id.nav_share -> {
@@ -102,4 +195,47 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
+    /*fun downLoadBorders(){
+        val downLoadBordersThread = async(CommonPool) {
+            result =  loader.downloadBorders()
+            try{
+                borderCoordinates = Array(result.length(),{i -> (MyPoint(result.getJSONArray(i).getDouble(0),
+                        result.getJSONArray(i).getDouble(1)))})
+            }catch (e : Exception){
+                e.printStackTrace()
+            }
+        }
+        launch(UI) { downLoadBordersThread.await() }
+    }*/
+
+
+
+    /*val downLoadActiveBuyersThread = async(CommonPool) {
+        result = loader.downloadBuyersPoint("1") as JSONArray
+        try{
+            activeBuyers = Array(result.length(), {i -> (Buyer(result.getJSONObject(i).getInt("id"),
+                    Point(result.getJSONObject(i)
+                            .getJSONObject("geometry")
+                            .getJSONArray("coordinates")
+                            .getDouble(0)
+                            ,
+                            result.getJSONObject(i)
+                                    .getJSONObject("geometry")
+                                    .getJSONArray("coordinates")
+                                    .getDouble(1)
+                            )))})
+
+        }catch (e : Exception){
+            e.printStackTrace()
+        }
+        print("ok")
+    }
+
+
+    launch {
+        downLoadBordersThread.await()
+        downLoadActiveBuyersThread.await()
+    }
+    print("ok")*/
 }

@@ -7,6 +7,16 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.gms.maps.SupportMapFragment
+import com.yandex.mapkit.Animation
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
+import e.sergeev.oleg.salesmap.R.id.mapview
+import kotlinx.android.synthetic.main.fragment_ya_map.*
+import e.sergeev.oleg.salesmap.R.id.mapview
+
+
 
 
 /**
@@ -33,10 +43,20 @@ class YaMapFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ya_map, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        mView = inflater.inflate(R.layout.fragment_ya_map, container, false)
+        return mView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        MapKitFactory.setApiKey("ecf92373-3377-4b1e-9f5f-e8f9a6f93f54")
+        MapKitFactory.initialize(context)
+
+        mapview.getMap().move(
+                CameraPosition(Point(55.751574, 37.573856), 11.0f, 0.0f, 0.0f),
+                Animation(Animation.Type.SMOOTH, 0f),
+                null)
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -46,7 +66,19 @@ class YaMapFragment : Fragment() {
         }
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onStop() {
+        super.onStop()
+        mapview.onStop()
+        MapKitFactory.getInstance().onStop()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mapview.onStart()
+        MapKitFactory.getInstance().onStart()
+    }
+
+    /*override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (context is OnFragmentInteractionListener) {
             mListener = context
@@ -58,7 +90,7 @@ class YaMapFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         mListener = null
-    }
+    }*/
 
     /**
      * This interface must be implemented by activities that contain this
@@ -79,6 +111,7 @@ class YaMapFragment : Fragment() {
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
         private val ARG_PARAM1 = "param1"
         private val ARG_PARAM2 = "param2"
+        private var mView: View? = null
 
         /**
          * Use this factory method to create a new instance of

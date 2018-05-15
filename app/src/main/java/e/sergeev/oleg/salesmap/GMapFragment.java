@@ -1,29 +1,31 @@
 package e.sergeev.oleg.salesmap;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 
-import e.sergeev.oleg.salesmap.yaMapControllers.GMapController;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+
+import e.sergeev.oleg.salesmap.Models.Buyer;
+import e.sergeev.oleg.salesmap.Models.MyPoint;
 
 public class GMapFragment extends Fragment implements OnMapReadyCallback {
 
@@ -32,7 +34,11 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback {
     private View mView;
     private LatLng myLocations;
     private FusedLocationProviderClient mFusedLocationClient;
-    GMapController gMapController;
+    private Polygon border;
+    private ArrayList<Marker> activeBuyersMarkers;
+    private Boolean activeBuyersVisible;
+    private ArrayList<Marker> sleepBuyersMarkers;
+    private Boolean sleepBuyersVisible;
 
     public GMapFragment() {
     }
@@ -40,7 +46,7 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        //mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
     }
 
     @Override
@@ -65,7 +71,6 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         MapsInitializer.initialize(getContext());
         mGoogleMap = googleMap;
-        gMapController = new GMapController(googleMap);
 
         CameraPosition cameraPosition;
         if(myLocations != null){
@@ -75,7 +80,8 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback {
         }
         //googleMap.addMarker(new MarkerOptions().position(new LatLng(55.755826, 37.617299)));/*.title("Жопа мира").snippet("Вот это да..."));*/
 
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
     }
 
     @Override
@@ -100,5 +106,78 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback {
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
+    }
+
+
+    public void createBorderPolygon(MyPoint[] borderCoordinates){
+        PolygonOptions options = new PolygonOptions();
+            for (int i = 0; i < borderCoordinates.length; i++) {
+                options.add(new LatLng(borderCoordinates[i].getLat(), borderCoordinates[i].getLongi()));
+            }
+        border = mGoogleMap.addPolygon(options);
+        border.setStrokeWidth(5f);
+        border.setFillColor(R.color.terrFillColor);
+        border.setVisible(true);
+    }
+    public Polygon getBorder(){
+        return border;
+    }
+    public void setBorderVisible(Boolean is){
+        border.setVisible(is);
+    }
+
+
+
+    public void createActiveBuyersMarkets(@NotNull Buyer[] activeBuyers) {
+        activeBuyersMarkers = new ArrayList<>();
+        for (int i = 0; i < activeBuyers.length; i++) {
+            Buyer buyer = activeBuyers[i];
+            Marker marker = mGoogleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(buyer.getCoordinates().getLat(), buyer.getCoordinates().getLongi()))
+                    .title(Integer.toString(buyer.getId()))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_store_black_24dp)));
+            activeBuyersMarkers.add(marker);
+        }
+        activeBuyersVisible = true;
+    }
+
+    public ArrayList getActiveBuyersMarkers(){
+        return activeBuyersMarkers;
+    }
+
+    public void setActiveBuyersVisible(Boolean is){
+        for(int i = 0; i < activeBuyersMarkers.size(); i++){
+            activeBuyersMarkers.get(i).setVisible(is);
+            activeBuyersVisible = is;
+        }
+    }
+    public boolean isActiveBuyersVisible(){
+        return activeBuyersVisible;
+    }
+
+
+    public void createSleepBuyersMarkets(@NotNull Buyer[] activeBuyers) {
+        sleepBuyersMarkers= new ArrayList<>();
+        for (int i = 0; i < activeBuyers.length; i++) {
+            Buyer buyer = activeBuyers[i];
+            Marker marker = mGoogleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(buyer.getCoordinates().getLat(), buyer.getCoordinates().getLongi()))
+                    .title(Integer.toString(buyer.getId()))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_store_black_24dp)));
+            sleepBuyersMarkers.add(marker);
+        }
+        sleepBuyersVisible = true;
+    }
+    public ArrayList getSleepBuyersMarkers(){
+        return sleepBuyersMarkers;
+    }
+    public void setSleepBuyersVisible(Boolean is){
+        for(int i = 0; i < sleepBuyersMarkers.size(); i++){
+            sleepBuyersMarkers.get(i).setVisible(is);
+            sleepBuyersVisible = is;
+        }
+    }
+    public boolean isSleepBuyersVisible(){
+        return sleepBuyersVisible;
     }
 }

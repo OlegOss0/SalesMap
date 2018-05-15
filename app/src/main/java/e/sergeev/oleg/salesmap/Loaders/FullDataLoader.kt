@@ -61,6 +61,7 @@ class FullDataLoader(territoryName : String) {
             }
         } catch (e: Exception) {
 
+            TODO("при неправильном запросе получаем пустой ответ")
         }
         return coordinates
     }
