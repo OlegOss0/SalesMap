@@ -3,35 +3,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/show_borders"
-            android:icon="@drawable/ic_layers_black_24dp"
-            android:title="Территория" />
-        <item
-            android:id="@+id/show_all_byers"
-            android:icon="@drawable/ic_group_black_24dp"
-            android:title="Все клиенты" />
-        <item
-            android:id="@+id/show_active_byers"
-            android:icon="@drawable/ic_sentiment_very_satisfied_black_24dp"
-            android:title="Аактивне клиенты" />
-        <item
-            android:id="@+id/show_sleep_byers"
-            android:icon="@drawable/ic_sentiment_very_dissatisfied_black_24dp"
-            android:title="Спящие клиенты" />
-    </group>
-
-    <item android:title="Communicate">
+    <item android:title="Карта">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/show_borders"
+                android:icon="@drawable/ic_layers_black_24dp"
+                android:title="Территория" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/show_active_byers"
+                android:icon="@drawable/ic_sentiment_very_satisfied_black_24dp"
+                android:title="Активные клиенты" />
+            <item
+                android:id="@+id/show_sleep_byers"
+                android:icon="@drawable/ic_sentiment_very_dissatisfied_black_24dp"
+                android:title="Спящие клиенты" />
+        </menu>
+    </item>
+
+    <item android:title="Дополнительно">
+        <menu>
+            <item
+                android:id="@+id/show_list"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Список" />
+            <item
+                android:id="@+id/add_buyer"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="Добавить точку" />
         </menu>
     </item>
 
