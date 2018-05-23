@@ -111,9 +111,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
             }
-            R.id.show_all_byers -> {
-
-            }
             R.id.show_active_byers -> {
                 if(gMapFragment.activeBuyersMarkers == null){
                     val downLoadActiveBuyersThread = async(CommonPool) {
@@ -184,10 +181,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
             }
-            R.id.nav_share -> {
+            R.id.show_list -> {
 
             }
-            R.id.nav_send -> {
+            R.id.add_buyer -> {
 
             }
         }
