@@ -14,6 +14,7 @@ import e.sergeev.oleg.salesmap.Models.Buyer
 import e.sergeev.oleg.salesmap.Models.MyPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.nav_header_main.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -33,6 +34,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        var strUser: String = intent.getStringExtra("Username")
+
 
         gMapFragment = GMapFragment()
         yMapFragment = YaMapFragment()

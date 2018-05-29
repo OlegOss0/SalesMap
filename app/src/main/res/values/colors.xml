@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="terrFillColor">#86b8f9ff</color>
+    <color name="bn_login">#5bc6ee</color>
 </resources>

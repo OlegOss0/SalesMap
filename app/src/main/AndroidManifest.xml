@@ -46,9 +46,10 @@
             android:label="@string/title_activity_login">
         </activity>
         <activity
-            android:name=".LoginAcrivity1"
+            android:name=".LoginActivity1"
             android:label="@string/title_activity_login"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

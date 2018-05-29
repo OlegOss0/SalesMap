@@ -3,14 +3,14 @@
     <item>
         <bitmap
             android:tileMode="repeat"
-            android:dither="false"
+            android:dither="true"
             android:src="@mipmap/bg_map"/>
     </item>
     <item>
         <shape android:shape="rectangle">
             <gradient
-                android:startColor="#e9faff"
-                android:endColor="#68bdda"
+                android:startColor="#dee2f8ff"
+                android:endColor="#6e00beff"
                 android:centerX="50%p"
                 android:centerY="50%p"
                 android:gradientRadius="50%p"

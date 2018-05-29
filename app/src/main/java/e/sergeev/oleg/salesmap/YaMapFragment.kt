@@ -48,6 +48,8 @@ class YaMapFragment : Fragment() {
         return mView
     }
 
+    TODO
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         MapKitFactory.setApiKey("ecf92373-3377-4b1e-9f5f-e8f9a6f93f54")

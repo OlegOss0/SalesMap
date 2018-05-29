@@ -25,6 +25,7 @@ import java.util.ArrayList
 import android.Manifest.permission.READ_CONTACTS
 
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_login1.*
 
 /**
  * A login screen that offers login via email/password.
@@ -162,13 +163,13 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             val shortAnimTime = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
-            login_form.visibility = if (show) View.GONE else View.VISIBLE
-            login_form.animate()
+            login_layout.visibility = if (show) View.GONE else View.VISIBLE
+            login_layout.animate()
                     .setDuration(shortAnimTime)
                     .alpha((if (show) 0 else 1).toFloat())
                     .setListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator) {
-                            login_form.visibility = if (show) View.GONE else View.VISIBLE
+                            login_layout.visibility = if (show) View.GONE else View.VISIBLE
                         }
                     })
 
