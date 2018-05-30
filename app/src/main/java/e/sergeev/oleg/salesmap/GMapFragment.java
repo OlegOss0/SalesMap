@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
@@ -111,38 +112,44 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback {
 
     public void createBorderPolygon(MyPoint[] borderCoordinates){
         PolygonOptions options = new PolygonOptions();
-            for (int i = 0; i < borderCoordinates.length; i++) {
+        for(MyPoint point : borderCoordinates){
+            options.add(new LatLng(point.getLat(), point.getLongi()));
+        }
+            /*for (int i = 0; i < borderCoordinates.size(); i++) {
                 options.add(new LatLng(borderCoordinates[i].getLat(), borderCoordinates[i].getLongi()));
-            }
+            }*/
         border = mGoogleMap.addPolygon(options);
         border.setStrokeWidth(5f);
         border.setFillColor(R.color.terrFillColor);
         border.setVisible(true);
+
+        moveCamToObject(getCenterPoint((ArrayList<LatLng>) options.getPoints()));
     }
+
     public Polygon getBorder(){
         return border;
     }
+
     public void setBorderVisible(Boolean is){
         border.setVisible(is);
     }
 
-
-
     public void createActiveBuyersMarkets(@NotNull Buyer[] activeBuyers) {
         activeBuyersMarkers = new ArrayList<>();
+
         for (int i = 0; i < activeBuyers.length; i++) {
             Buyer buyer = activeBuyers[i];
+            double lat = buyer.getCoordinates().getLat();
+            double longi = buyer.getCoordinates().getLongi();
+
             Marker marker = mGoogleMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(buyer.getCoordinates().getLat(), buyer.getCoordinates().getLongi()))
+                    .position(new LatLng(lat, longi))
                     .title(Integer.toString(buyer.getId()))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_store_black_24dp)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_work_point)));
             activeBuyersMarkers.add(marker);
         }
-        activeBuyersVisible = true;
-    }
 
-    public ArrayList getActiveBuyersMarkers(){
-        return activeBuyersMarkers;
+        activeBuyersVisible = true;
     }
 
     public void setActiveBuyersVisible(Boolean is){
@@ -163,7 +170,7 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback {
             Marker marker = mGoogleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(buyer.getCoordinates().getLat(), buyer.getCoordinates().getLongi()))
                     .title(Integer.toString(buyer.getId()))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_store_black_24dp)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_sleep_point)));
             sleepBuyersMarkers.add(marker);
         }
         sleepBuyersVisible = true;
@@ -180,4 +187,29 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback {
     public boolean isSleepBuyersVisible(){
         return sleepBuyersVisible;
     }
+
+    public ArrayList getActiveBuyersMarkers(){
+        return activeBuyersMarkers;
+    }
+
+    private LatLng getCenterPoint(ArrayList<LatLng> pointsList){
+        LatLng centerLatLng = null;
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for(int i = 0 ; i < pointsList.size() ; i++)
+        {
+            builder.include(pointsList.get(i));
+        }
+        LatLngBounds bounds = builder.build();
+        centerLatLng =  bounds.getCenter();
+
+        return centerLatLng;
+    }
+
+    private void moveCamToObject(LatLng centerPoint){
+        CameraPosition cameraPosition;
+        cameraPosition = CameraPosition.builder().target(centerPoint).zoom(12).bearing(0).tilt(45).build();
+        mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+
 }

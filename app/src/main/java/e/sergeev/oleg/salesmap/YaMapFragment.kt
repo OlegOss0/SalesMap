@@ -12,11 +12,7 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
-import e.sergeev.oleg.salesmap.R.id.mapview
 import kotlinx.android.synthetic.main.fragment_ya_map.*
-import e.sergeev.oleg.salesmap.R.id.mapview
-
-
 
 
 /**
@@ -44,22 +40,24 @@ class YaMapFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        MapKitFactory.setApiKey("ecf92373-3377-4b1e-9f5f-e8f9a6f93f54")
+        MapKitFactory.initialize(context)
         mView = inflater.inflate(R.layout.fragment_ya_map, container, false)
         return mView
     }
 
-    TODO
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        MapKitFactory.setApiKey("ecf92373-3377-4b1e-9f5f-e8f9a6f93f54")
-        MapKitFactory.initialize(context)
+        /*MapKitFactory.setApiKey("ecf92373-3377-4b1e-9f5f-e8f9a6f93f54")*/
 
-        mapview.getMap().move(
+        var map =  yMapView.getMap()
+        map.move(
                 CameraPosition(Point(55.751574, 37.573856), 11.0f, 0.0f, 0.0f),
                 Animation(Animation.Type.SMOOTH, 0f),
+
                 null)
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     fun onButtonPressed(uri: Uri) {
@@ -70,13 +68,13 @@ class YaMapFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        mapview.onStop()
+        yMapView.onStop()
         MapKitFactory.getInstance().onStop()
     }
 
     override fun onStart() {
         super.onStart()
-        mapview.onStart()
+        yMapView.onStart()
         MapKitFactory.getInstance().onStart()
     }
 

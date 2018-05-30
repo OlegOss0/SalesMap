@@ -4,6 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="terrFillColor">#86b8f9ff</color>
+    <color name="terrFillColor">#571eff00</color>
     <color name="bn_login">#5bc6ee</color>
 </resources>

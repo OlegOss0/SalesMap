@@ -29,20 +29,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var contentFragment: Fragment
     private lateinit var gMapFragment: GMapFragment
     private lateinit var yMapFragment: YaMapFragment
-    private val loader: FullDataLoader = FullDataLoader("r113")
+    private lateinit var loader: FullDataLoader
+    private lateinit var terId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var strUser: String = intent.getStringExtra("Username")
+        //TODO проверить на null
+        terId = intent.getStringExtra("terId")
+        loader = FullDataLoader(terId)
 
 
         gMapFragment = GMapFragment()
-        yMapFragment = YaMapFragment()
+        /*yMapFragment = YaMapFragment()*/
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .add(R.id.container, yMapFragment)
+                    .add(R.id.container, gMapFragment)
                     .commit()
         }
 
@@ -72,6 +75,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
+        tv_terr_id_in_nav_header.setText("Территория " + terId)
         menuInflater.inflate(R.menu.main, menu)
         return true
     }

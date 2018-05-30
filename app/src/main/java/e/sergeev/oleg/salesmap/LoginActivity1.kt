@@ -8,10 +8,12 @@ import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.text.Editable
 import android.text.TextUtils
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import e.sergeev.oleg.salesmap.R.id.cvLogOn
 
 import kotlinx.android.synthetic.main.activity_login1.*
 
@@ -80,12 +82,13 @@ class LoginActivity1 : AppCompatActivity() {
 
     private fun isEmailValid(email: String): Boolean {
         //TODO: Replace this with your own logic
-        return email.contains("@")
+        return email.contains("r")
     }
 
     private fun isPasswordValid(password: String): Boolean {
         //TODO: Replace this with your own logic
-        return password.length > 4
+        //return password.length > 4
+        return true
     }
 
     /**
@@ -158,9 +161,9 @@ class LoginActivity1 : AppCompatActivity() {
 
             if (success!!) {
                 val intent = Intent(this@LoginActivity1,MainActivity::class.java)
-                var userName = edLogin.text.toString()
+                /*var userName = edLogin.text.toString()*/
                 //var password = password_field.text.toString()
-                intent.putExtra("Username", userName)
+                intent.putExtra("terId", edLogin.text.toString())
                 startActivity(intent)
                 finish()
             } else {

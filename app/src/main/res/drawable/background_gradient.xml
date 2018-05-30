@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <bitmap
-            android:tileMode="repeat"
+            android:tileMode="mirror"
             android:dither="true"
             android:src="@mipmap/bg_map"/>
     </item>

@@ -5,7 +5,7 @@
     tools:context="e.sergeev.oleg.salesmap.YaMapFragment">
 
     <com.yandex.mapkit.mapview.MapView
-        android:id="@+id/mapview"
+        android:id="@+id/yMapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
