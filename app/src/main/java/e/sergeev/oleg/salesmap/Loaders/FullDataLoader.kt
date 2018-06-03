@@ -14,6 +14,7 @@ class FullDataLoader(territoryName : String) {
     val baseBuyersUrl = "https://iup.balmiko.ru/map_test/getpoints.php?status="// add status(1 -activ, 2-sleep), add "&territory=",add territory name
     val territoryStr = "&territory="
     val territoryName = territoryName
+    val BUYER_INFO_REGUEST_URL = "http://iup.balmiko.ru/map_test/getinfoclient.php?code="
 
     fun downloadBuyersPoint(status : String) : JSONArray{
         var data = StringBuilder()
@@ -65,5 +66,32 @@ class FullDataLoader(territoryName : String) {
         }
         return coordinates
     }
+
+    fun downloadBuyerInfo(id : String) : JSONArray{
+        var info = JSONArray()
+        var stringBuilder = StringBuilder()
+        var jsonResponse: JSONObject
+        try {
+            val connection = URL(BUYER_INFO_REGUEST_URL + id).openConnection() as HttpURLConnection
+            try {
+                connection.inputStream.bufferedReader().forEachLine { it -> stringBuilder.append(it) }
+                jsonResponse = JSONObject(stringBuilder.toString())
+                //TODO
+                info = jsonResponse.getJSONArray("features")
+                        .getJSONObject(0)
+                        .getJSONObject("geometry")
+                        .getJSONArray("coordinates")
+                        .getJSONArray(0)
+                print("ok")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                connection.disconnect()
+            }
+        } catch (e: Exception) {
+
+            TODO("при неправильном запросе получаем пустой ответ")
+        }
+        return info    }
 
 }

@@ -2,6 +2,7 @@ package e.sergeev.oleg.salesmap
 
 import android.app.Fragment
 import android.os.Bundle
+import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -14,6 +15,7 @@ import e.sergeev.oleg.salesmap.Models.Buyer
 import e.sergeev.oleg.salesmap.Models.MyPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.bottom_sheet.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
@@ -106,7 +108,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                     launch(UI){
                         downLoadBordersThread.await()
-                        gMapFragment.createBorderPolygon(borderCoordinates)
+                        gMapFragment.createBorder(borderCoordinates)
                     }
                 }else{
                     var borderVisible = gMapFragment.border.isVisible
@@ -155,7 +157,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.show_sleep_byers -> {
-                if(gMapFragment.sleepBuyersMarkers == null){
+                /*if(gMapFragment.sleepBuyersMarkers == null){
                     val downLoadSleepBuyersThread = async(CommonPool) {
                         result = loader.downloadBuyersPoint("0") as JSONArray
                         try{
@@ -186,7 +188,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }else{
                         gMapFragment.setSleepBuyersVisible(true)
                     }
-                }
+                }*/
 
             }
             R.id.show_list -> {
@@ -199,6 +201,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    fun getLoader() : FullDataLoader{
+        return loader
+    }
+
+    public fun showBuyerInfo(id : String){
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
+        bottomSheetBehavior.isHideable = false
     }
 
     /*fun downLoadBorders(){
