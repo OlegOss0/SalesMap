@@ -13,10 +13,6 @@
                 android:id="@+id/show_active_byers"
                 android:icon="@drawable/ic_sentiment_very_satisfied_black_24dp"
                 android:title="Активные клиенты" />
-            <item
-                android:id="@+id/show_sleep_byers"
-                android:icon="@drawable/ic_sentiment_very_dissatisfied_black_24dp"
-                android:title="Спящие клиенты" />
         </menu>
     </item>
 

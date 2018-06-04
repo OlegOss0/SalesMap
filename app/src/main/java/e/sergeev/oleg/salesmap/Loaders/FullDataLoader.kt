@@ -1,6 +1,8 @@
 package e.sergeev.oleg.salesmap.Loaders
 
 import android.util.Log
+import e.sergeev.oleg.salesmap.Models.Buyer
+import e.sergeev.oleg.salesmap.Models.MyPoint
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -67,8 +69,8 @@ class FullDataLoader(territoryName : String) {
         return coordinates
     }
 
-    fun downloadBuyerInfo(id : String) : JSONArray{
-        var info = JSONArray()
+    fun downloadBuyerInfo(id : String) : Buyer{
+        var buyer = Buyer(null, null)
         var stringBuilder = StringBuilder()
         var jsonResponse: JSONObject
         try {
@@ -77,11 +79,18 @@ class FullDataLoader(territoryName : String) {
                 connection.inputStream.bufferedReader().forEachLine { it -> stringBuilder.append(it) }
                 jsonResponse = JSONObject(stringBuilder.toString())
                 //TODO
-                info = jsonResponse.getJSONArray("features")
-                        .getJSONObject(0)
-                        .getJSONObject("geometry")
-                        .getJSONArray("coordinates")
-                        .getJSONArray(0)
+                var buyer = Buyer(id.toInt(), MyPoint(jsonResponse.getJSONArray("coordinates").getDouble(0), jsonResponse.getJSONArray("coordinates").getDouble(1)))
+                buyer.name = jsonResponse.getString("name")
+                buyer.territory = jsonResponse.getString("territory")
+                buyer.lastDate = jsonResponse.getString("lastdate")
+                buyer.status = jsonResponse.getString("status")
+                buyer.adres = jsonResponse.getString("adres")
+                val numbers = jsonResponse.getJSONArray("phones")
+                val le = numbers.length()
+                for (i in 1..numbers.length()){
+                    buyer.phones.add(numbers.getString(i))
+                }
+
                 print("ok")
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -92,6 +101,6 @@ class FullDataLoader(territoryName : String) {
 
             TODO("при неправильном запросе получаем пустой ответ")
         }
-        return info    }
+        return buyer  }
 
 }

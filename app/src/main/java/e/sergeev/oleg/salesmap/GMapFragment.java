@@ -6,15 +6,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -32,16 +31,14 @@ import e.sergeev.oleg.salesmap.Loaders.FullDataLoader;
 import e.sergeev.oleg.salesmap.Models.Buyer;
 import e.sergeev.oleg.salesmap.Models.MyPoint;
 
-public class GMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class GMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, MapControllerListener {
 
     private GoogleMap mGoogleMap;
     private MapView mMapView;
     private View mView;
-    private Polygon border;
-    private ArrayList<Marker> activeBuyersMarkers;
-    private Boolean activeBuyersVisible;
-    private ArrayList<Marker> sleepBuyersMarkers;
-    //private Boolean sleepBuyersVisible;
+    public Polygon border;
+    private ArrayList<Marker> buyersMarkers;
+    private Boolean buyersMarketsVisible;
 
     public GMapFragment() {
     }
@@ -79,6 +76,8 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback, Google
         mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
+    //TODO унаследовано от MapControllerListener
+    @Override
     public void createBorder(MyPoint[] borderCoordinates){
         PolygonOptions options = new PolygonOptions();
         for(MyPoint point : borderCoordinates){
@@ -92,16 +91,28 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback, Google
         moveCamToObject(getCenterPoint((ArrayList<LatLng>) options.getPoints()));
     }
 
-    public void setBorderVisible(Boolean is){
-        border.setVisible(is);
+    @Override
+    public boolean isBorderVisible(){
+        return border.isVisible();
     }
 
-    public Polygon getBorder(){
-        return border;
+    @Override
+    public void setBorderVisible(boolean visible) {
+        border.setVisible(visible);
     }
 
-    public void createActiveBuyersMarkets(@NotNull Buyer[] activeBuyers) {
-        activeBuyersMarkers = new ArrayList<>();
+    public boolean isBorderCreated(){
+        boolean created = false;
+        if(border != null){
+            created = true;
+        }
+        return created;
+    }
+
+
+    //TODO унаследовано от MapControllerListener
+    public void createBuyersMarkets(@NotNull Buyer[] activeBuyers) {
+        buyersMarkers = new ArrayList<>();
 
         for (int i = 0; i < activeBuyers.length; i++) {
             Buyer buyer = activeBuyers[i];
@@ -112,51 +123,31 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback, Google
                     .position(new LatLng(lat, longi))
                     .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_work_point)));
             marker.setTag(Integer.toString(buyer.getId()));
-            activeBuyersMarkers.add(marker);
+            buyersMarkers.add(marker);
         }
-        activeBuyersVisible = true;
+        buyersMarketsVisible = true;
         mGoogleMap.setOnMarkerClickListener(this);
     }
 
-    public void setActiveBuyersVisible(Boolean is){
-        for(int i = 0; i < activeBuyersMarkers.size(); i++){
-            activeBuyersMarkers.get(i).setVisible(is);
-            activeBuyersVisible = is;
+    public boolean isBuyersMarketsCreated(){
+        boolean created = false;
+        if(buyersMarkers != null){
+            created = true;
         }
-    }
-    public boolean isActiveBuyersVisible(){
-        return activeBuyersVisible;
+        return created;
     }
 
-    public ArrayList getActiveBuyersMarkers(){
-        return activeBuyersMarkers;
+    public void setBuyersMarketsVisible(boolean visible){
+        for(int i = 0; i < buyersMarkers.size(); i++){
+            buyersMarkers.get(i).setVisible(visible);
+            buyersMarketsVisible = visible;
+        }
     }
 
-/*
-    public void createSleepBuyersMarkets(@NotNull Buyer[] activeBuyers) {
-        sleepBuyersMarkers= new ArrayList<>();
-        for (int i = 0; i < activeBuyers.length; i++) {
-            Buyer buyer = activeBuyers[i];
-            Marker marker = mGoogleMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(buyer.getCoordinates().getLat(), buyer.getCoordinates().getLongi()))
-                    .title(Integer.toString(buyer.getId()))
-                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_sleep_point)));
-            sleepBuyersMarkers.add(marker);
-        }
-        sleepBuyersVisible = true;
+    @Override
+    public boolean isBuyersMarketsVisible(){
+        return buyersMarketsVisible;
     }
-    public ArrayList getSleepBuyersMarkers(){
-        return sleepBuyersMarkers;
-    }
-    public void setSleepBuyersVisible(Boolean is){
-        for(int i = 0; i < sleepBuyersMarkers.size(); i++){
-            sleepBuyersMarkers.get(i).setVisible(is);
-            sleepBuyersVisible = is;
-        }
-    }
-    public boolean isSleepBuyersVisible(){
-        return sleepBuyersVisible;
-    }*/
 
     private LatLng getCenterPoint(ArrayList<LatLng> pointsList){
         LatLng centerLatLng = null;
@@ -181,18 +172,8 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback, Google
     public boolean onMarkerClick(final Marker marker) {
         String clickCount = (String) marker.getTag();
 
-        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(getActivity().findViewById(R.id.bottom_sheet));
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        MapController.Companion.getInstance().showBuyerInfo(clickCount);
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        bottomSheetBehavior.setPeekHeight(340);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-
-        Toast.makeText(getActivity(), "Clicked buyer id " + clickCount, Toast.LENGTH_LONG).show();
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur (which is for the camera to move such that the
@@ -223,6 +204,4 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback, Google
         super.onLowMemory();
         mMapView.onLowMemory();
     }
-
-
 }
