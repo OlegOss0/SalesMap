@@ -79,15 +79,15 @@ class FullDataLoader(territoryName : String) {
                 connection.inputStream.bufferedReader().forEachLine { it -> stringBuilder.append(it) }
                 jsonResponse = JSONObject(stringBuilder.toString())
                 //TODO
-                var buyer = Buyer(id.toInt(), MyPoint(jsonResponse.getJSONArray("coordinates").getDouble(0), jsonResponse.getJSONArray("coordinates").getDouble(1)))
+                buyer = Buyer(id.toInt(), MyPoint(jsonResponse.getJSONArray("coordinates").getDouble(0), jsonResponse.getJSONArray("coordinates").getDouble(1)))
                 buyer.name = jsonResponse.getString("name")
                 buyer.territory = jsonResponse.getString("territory")
                 buyer.lastDate = jsonResponse.getString("lastdate")
                 buyer.status = jsonResponse.getString("status")
                 buyer.adres = jsonResponse.getString("adres")
                 val numbers = jsonResponse.getJSONArray("phones")
-                val le = numbers.length()
-                for (i in 1..numbers.length()){
+                for (i in 0..(numbers.length()-1)){
+                    buyer.countPhones++
                     buyer.phones.add(numbers.getString(i))
                 }
 

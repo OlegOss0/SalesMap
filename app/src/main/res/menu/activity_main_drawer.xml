@@ -11,8 +11,9 @@
                 android:title="Территория" />
             <item
                 android:id="@+id/show_active_byers"
-                android:icon="@drawable/ic_sentiment_very_satisfied_black_24dp"
-                android:title="Активные клиенты" />
+                android:checkable="true"
+                android:icon="@drawable/ic_shop_32"
+                android:title="Точки продаж" />
         </menu>
     </item>
 
@@ -20,11 +21,11 @@
         <menu>
             <item
                 android:id="@+id/show_list"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_list_32dp"
                 android:title="Список" />
             <item
                 android:id="@+id/add_buyer"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_add_32dp"
                 android:title="Добавить точку" />
         </menu>
     </item>

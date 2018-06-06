@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#5c6bc0</color>
+    <color name="colorPrimaryDark">#26418f</color>
+    <color name="colorAccent">#ff80ab</color>
 
-    <color name="terrFillColor">#571eff00</color>
-    <color name="bn_login">#5bc6ee</color>
+    <color name="terrFillColor">#ab00ff9d</color>
+    <color name="bn_login">#69f0ae</color>
 </resources>

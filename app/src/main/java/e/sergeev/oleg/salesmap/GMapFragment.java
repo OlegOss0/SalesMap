@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import e.sergeev.oleg.salesmap.Loaders.FullDataLoader;
 import e.sergeev.oleg.salesmap.Models.Buyer;
@@ -88,7 +89,7 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback, Google
         border.setFillColor(R.color.terrFillColor);
         border.setVisible(true);
 
-        moveCamToObject(getCenterPoint((ArrayList<LatLng>) options.getPoints()));
+        moveCamToObject(getCenterPoint((ArrayList<LatLng>)options.getPoints()));
     }
 
     @Override
@@ -98,6 +99,9 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void setBorderVisible(boolean visible) {
+        if(!border.isVisible()){
+            moveCamToObject(getCenterPoint((ArrayList)border.getPoints()));
+        }
         border.setVisible(visible);
     }
 
@@ -113,7 +117,6 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback, Google
     //TODO унаследовано от MapControllerListener
     public void createBuyersMarkets(@NotNull Buyer[] activeBuyers) {
         buyersMarkers = new ArrayList<>();
-
         for (int i = 0; i < activeBuyers.length; i++) {
             Buyer buyer = activeBuyers[i];
             double lat = buyer.getCoordinates().getLat();
@@ -138,9 +141,14 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     public void setBuyersMarketsVisible(boolean visible){
+        ArrayList<LatLng> temp = new ArrayList<>();
         for(int i = 0; i < buyersMarkers.size(); i++){
             buyersMarkers.get(i).setVisible(visible);
             buyersMarketsVisible = visible;
+            temp.add(i,buyersMarkers.get(i).getPosition());
+        }
+        if (visible == true){
+            moveCamToObject(getCenterPoint(temp));
         }
     }
 
@@ -171,10 +179,7 @@ public class GMapFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public boolean onMarkerClick(final Marker marker) {
         String clickCount = (String) marker.getTag();
-
         MapController.Companion.getInstance().showBuyerInfo(clickCount);
-
-
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur (which is for the camera to move such that the
         // marker is centered and for the marker's info window to open, if it has one).

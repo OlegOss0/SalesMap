@@ -1,5 +1,6 @@
 package e.sergeev.oleg.salesmap
 
+import android.app.PendingIntent.getActivity
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -8,23 +9,32 @@ import android.widget.Toast
 import e.sergeev.oleg.salesmap.Loaders.FullDataLoader
 import e.sergeev.oleg.salesmap.Models.Buyer
 import e.sergeev.oleg.salesmap.Models.MyPoint
-import e.sergeev.oleg.salesmap.R.drawable.loader
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.android.synthetic.main.bottom_sheet.*
 
 /**
  * Created by o.sergeev on 03.06.2018.
  */
-class MapController() {
+class MapController{
+    private constructor(){
+
+    }
     init {
 
     }
     private object Holder {
         val INSTANCE = MapController()}
+    companion object {
+        val instance: MapController by lazy {Holder.INSTANCE }
+    }
 
-
+    var loader : FullDataLoader? = null
+    var myMap : MapControllerListener? = null
+    var activity : AppCompatActivity? = null
+    var buyer : Buyer? = null
     private lateinit var borderCoordinates : Array<MyPoint>
     private lateinit var activeBuyers : Array<Buyer>
 
@@ -77,7 +87,6 @@ class MapController() {
             launch(UI){
                 downLoadActiveBuyersThread.await()
                 myMap!!.createBuyersMarkets(activeBuyers)
-                showBuyerInfo()
             }
         }else{
             if(myMap!!.isBuyersMarketsVisible()){
@@ -90,15 +99,24 @@ class MapController() {
 
     fun showBuyerInfo(id : String){
         val downLoadBuyerInfoThread = async(CommonPool) {
-            val buyer = loader!!.downloadBuyerInfo("105325")
+            buyer = loader!!.downloadBuyerInfo(id)
+            print("ok")
         }
         launch(UI){
             downLoadBuyerInfoThread.await()
+
+            activity!!.tv_name.setText(buyer?.name)
+            activity!!.tv_address.setText(buyer?.adres)
+            activity!!.tv_terr.setText(buyer?.territory)
+            activity!!.tv_status.setText(buyer?.status)
+            activity!!.tv_last_date.setText(buyer?.lastDate)
+            activity!!.tv_phone.setText(buyer?.phones?.get(0))
+
             val bottomSheetBehavior = BottomSheetBehavior.from<View>(activity!!.findViewById(R.id.bottom_sheet))
-            bottomSheetBehavior.peekHeight = 70
+            bottomSheetBehavior.peekHeight = 120
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
-            val info = getActivity()!!.findViewById(R.id.info) as LinearLayout
+            val info = activity!!.findViewById(R.id.info) as LinearLayout
             info.setOnClickListener {
                 if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN)
@@ -106,20 +124,7 @@ class MapController() {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED)
                 }
             }
-
-            Toast.makeText(getActivity(), "Clicked buyer id $clickCount", Toast.LENGTH_LONG).show()
-
-
+            Toast.makeText(activity, "Clicked buyer id $id", Toast.LENGTH_LONG).show()
         }
-
-
     }
-    companion object {
-        val instance: MapController by lazy {Holder.INSTANCE }
-    }
-    var loader : FullDataLoader? = null
-    var myMap : MapControllerListener? = null
-    var activity : AppCompatActivity? = null
-
-
 }

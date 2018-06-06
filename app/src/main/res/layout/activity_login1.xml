@@ -21,7 +21,7 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/login_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true">
 
@@ -83,7 +83,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             app:cardBackgroundColor="@color/bn_login"
             app:cardCornerRadius="25dp"
             app:cardElevation="10dp"

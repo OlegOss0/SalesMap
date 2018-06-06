@@ -8,12 +8,8 @@ import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.text.Editable
 import android.text.TextUtils
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.TextView
-import e.sergeev.oleg.salesmap.R.id.cvLogOn
 
 import kotlinx.android.synthetic.main.activity_login1.*
 
@@ -94,6 +90,8 @@ class LoginActivity1 : AppCompatActivity() {
     /**
      * Shows the progress UI and hides the login form.
      */
+
+    //TODO вынести в отдельный класс anim
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private fun showProgress(show: Boolean) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
